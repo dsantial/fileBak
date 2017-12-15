@@ -1,0 +1,15 @@
+class TypeVariavleBound{
+	def compare[T <: Compareble[T]](first:T,second:T)={
+	if (first.compareTo(second)>0)
+		first
+	else
+		second
+	}
+}
+
+object TypeVariableBound{
+	def main(args:Array[String]):Unit = {
+	val tvb = new TypeVariableBound
+	println(tvb.compare("A","B"))
+	}
+}

@@ -1,0 +1,24 @@
+import java.io.PrintWriter
+
+trait Logger {
+	println("Logger")
+	def log(msg:String):Unit
+}
+
+trait FileLogger extends Logger{
+	println("FilgeLogger")
+	val fileOutput=new PrintWriter("file.log")
+	fileOutput.println("#")
+
+	def log(msg:String):Unit = {
+	fileOutput.print(msg)
+	fileOutput.flush()
+	}
+}
+object TraitDemo {
+	def main(args:Array[String]):Unit = {
+	
+	new FileLogger{
+	}.log("trat demo")
+	}
+}

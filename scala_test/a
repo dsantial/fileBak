@@ -1,0 +1,28 @@
+import org.apache.spark.sql.types.{DataTypes, StructField, StructType}
+import org.apache.spark.sql.{Row, SQLContext}
+import org.apache.spark.{SparkConf, SparkContext}
+
+object Test {
+  def main(args: Array[String]) {
+    val conf = new SparkConf().setAppName("test").setMaster("local") // 调试的时候一定不要用local[*]
+    val sc = new SparkContext(conf)
+    val sqlContext = new SQLContext(sc)
+    import sqlContext.implicits._
+
+    val idAgeRDDRow = sc.parallelize(Array(Row(1, 30), Row(2, 29), Row(4, 21)))
+
+    val schema = StructType(Array(StructField("id", DataTypes.IntegerType), StructField("age", DataTypes.IntegerType)))
+
+    // 在2.0.0-preview中这行代码创建出的DataFrame, 其实是DataSet[Row]
+    val idAgeDS = sqlContext.createDataFrame(idAgeRDDRow, schema)
+
+    // 在2.0.0-preview中, 还不支持自定的Encoder, Row类型不行, 自定义的bean也不行
+    // 官方文档也有写通过bean创建Dataset的例子，但是我运行时并不能成功
+    // 所以目前需要用创建DataFrame的方法, 来创建DataSet[Row]
+    // sqlContext.createDataset(idAgeRDDRow)
+
+    // 目前支持String, Integer, Long等类型直接创建Dataset
+    Seq(1, 2, 3).toDS().show()
+    sqlContext.createDataset(sc.parallelize(Array(1, 2, 3))).show()
+  }
+}
